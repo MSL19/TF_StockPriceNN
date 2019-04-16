@@ -58,8 +58,9 @@ let volumeDeltaHM = [];
 let priceMovementHM = [];
 let shiftedPriceChangeM =[];
 
-let JSONdata = require('./stockTraining.json');
-let testData = require('./predictJSON.json');
+//let JSONdata = require('./stockTraining.json');
+let testData = [];//require('./predictJSON.json');
+let jData = [];
 
 let bigString = {};
 
@@ -69,20 +70,55 @@ async function updateNN(){
 }  
 
 async function predictPrice(){ //this function only runs of the stock price has updated (this happens every 30 minutes)
-try{
-    let comp = await getStockJSON();
-    let DBup = dataBaseCheck(comp); //checking if the Database has updated--if not, the NN will not be run
-    if(DBup){
-        
+console.log('wdas');
+    try{
+    console.log("asdasd");
+    jsonString = await getStockJSONapple();
+    let DBup = dataBaseCheck(jsonString); //checking if the Database has updated--if not, the NN will not be run
+    jsonString2 = await getStockJSONmicro();
+    //if(DBup){
+        console.log("asdasd");
+        testData = [{
+            pD: jsonString["Time Series (30min)"][timeSeriesKeys[0]]['4. close'] - jsonString["Time Series (30min)"][timeSeriesKeys[1]]['4. close'], 
+            vD: jsonString["Time Series (30min)"][timeSeriesKeys[0]]['5. volume'] - jsonString["Time Series (30min)"][timeSeriesKeys[1]]['5. volume'],
+            pDM: jsonString2["Time Series (30min)"][timeSeriesKeys[0]]['4. close'] - jsonString2["Time Series (30min)"][timeSeriesKeys[1]]['4. close'],
+            vDM: jsonString2["Time Series (30min)"][timeSeriesKeys[0]]['5. volume'] - jsonString2["Time Series (30min)"][timeSeriesKeys[1]]['5. volume'],
+            pC: jsonString["Time Series (30min)"][timeSeriesKeys[1]]['4. close'] - jsonString["Time Series (30min)"][timeSeriesKeys[2]]['4. close']
+        }]
+        trainingData = [{
+            pD: jsonString["Time Series (30min)"][timeSeriesKeys[1]]['4. close'] - jsonString["Time Series (30min)"][timeSeriesKeys[2]]['4. close'], 
+            vD: jsonString["Time Series (30min)"][timeSeriesKeys[1]]['5. volume'] - jsonString["Time Series (30min)"][timeSeriesKeys[2]]['5. volume'],
+            pDM: jsonString2["Time Series (30min)"][timeSeriesKeys[1]]['4. close'] - jsonString2["Time Series (30min)"][timeSeriesKeys[2]]['4. close'],
+            vDM: jsonString2["Time Series (30min)"][timeSeriesKeys[1]]['5. volume'] - jsonString2["Time Series (30min)"][timeSeriesKeys[2]]['5. volume'],
+        }]
         predictData = tf.tensor2d(testData.map(item=>[
             item.pD, item.vD, item.pDM, item.vDM
         ]
         ), [1,4]
         ) 
-
-    }
+        trainingData = tf.tensor2d(trainingData.map(item=>[
+            item.pD, item.vD, item.pDM, item.vDM
+        ]
+        ), [1,4]
+        )
+        outputData = tf.tensor2d(testData.map(item => [
+            item.pC > 0  ? 1 : 0,
+            item.pC === 0 ? 1 : 0,
+            item.pC < 0 ? 1 : 0
+        
+        ]), [1,3])
+        console.log('......Loss History.......');
+        for(let i=0;i<98;i++){
+         let res = await model.fit(trainingData, outputData, {epochs: 98});
+         console.log(`Iteration ${i}: ${res.history.loss[0]}`);
+      }
+      console.log('....Model Prediction !!!.....')
+      model.predict(predictData).print();
+ //   }
 }
-
+catch(e){
+    console.log(e);
+}
 }
 
 function dataBaseCheck(company){ //this checks to see if the database has been updated
@@ -121,7 +157,7 @@ function getStockJSONapple(){ //this pulls the JSON data on Apple stock from Alp
                 try{
                 company = JSON.parse(json);   
                 resolve(company); //returning the JSON
-                console.log(company);
+                //console.log(company);
                 }
                 catch(e){
                 reject(e);
@@ -149,8 +185,8 @@ function getStockJSONapple(){ //this pulls the JSON data on Apple stock from Alp
                 try{
                 company = JSON.parse(json);   
                 resolve(company); //returning the JSON
-                console.log(company);
-
+               // console.log(company);
+                dataBaseCheck(company);
                 }
                 catch(e){
                 reject(e);
@@ -193,7 +229,6 @@ function getStockJSONapple(){ //this pulls the JSON data on Apple stock from Alp
   /*  let priceDeltaM = jsonString2["Time Series (30min)"][timeSeriesKeys[i-1]]['4. close'] - jsonString["Time Series (30min)"][timeSeriesKeys[i]]['4. close'];
     shiftedPriceChangeM.push(priceDeltaM);*/
  }
-  let jData = [];
   for(let i= 0; i<volumeDeltaH.length; i++){
       let objectP = {
         pD: pricesDeltaH[i],
@@ -222,12 +257,12 @@ function trainNN(){
    
 
  model = tf.sequential();
-    trainingData = tf.tensor2d(JSONdata.map(item=> [
+    trainingData = tf.tensor2d(jData.map(item=> [
         item.pD, item.vD, item.pDM, item.vDM
     ]
     ),[98,4])
 
-     outputData = tf.tensor2d(JSONdata.map(item => [
+     outputData = tf.tensor2d(jData.map(item => [
         item.pC > 0  ? 1 : 0,
         item.pC === 0 ? 1 : 0,
         item.pC < 0 ? 1 : 0
@@ -265,8 +300,8 @@ train_data();
 
 async function train_data(){
     console.log('......Loss History.......');
-    for(let i=0;i<98;i++){
-     let res = await model.fit(trainingData, outputData, {epochs: 98});
+    for(let i=0;i<8;i++){
+     let res = await model.fit(trainingData, outputData, {epochs: 8});
      console.log(`Iteration ${i}: ${res.history.loss[0]}`);
   }
   console.log('....Model Prediction .....')
@@ -274,4 +309,5 @@ async function train_data(){
 
 }
 
+//updateNN();
  

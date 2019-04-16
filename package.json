@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/MSL19/TF_StockPriceNN#readme",
   "dependencies": {
-    "express": "^4.16.4"
+    "@tensorflow/tfjs": "^1.0.4",
+    "express": "^4.16.4",
+    "fs-extra": "^7.0.1"
   }
 }

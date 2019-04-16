@@ -268,8 +268,8 @@ function getStockJSONapple(){ //this pulls the JSON data on Apple stock from Alp
       pDM: jsonString2["Time Series (30min)"][timeSeriesKeys[0]]['4. close'] - jsonString2["Time Series (30min)"][timeSeriesKeys[1]]['4. close'],
       vDM: jsonString2["Time Series (30min)"][timeSeriesKeys[0]]['5. volume'] - jsonString2["Time Series (30min)"][timeSeriesKeys[1]]['5. volume']
   }]
-  fs.writeFile('stockTraining.json', JSON.stringify(jData), function(){});
-  fs.writeFile('predictJSON.json', JSON.stringify(testData), function(){});
+  //fs.writeFile('stockTraining.json', JSON.stringify(jData), function(){});
+  //fs.writeFile('predictJSON.json', JSON.stringify(testData), function(){});
 
 //JSONdata = JSON.stringify(jData);
 trainNN();

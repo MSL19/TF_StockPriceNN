@@ -42,7 +42,6 @@ date = year+"-"+mon+"-"+day;
 
 
 var tf = require('@tensorflow/tfjs');
-const googleTrends = require('google-trends-api');
 var https = require("https");
 const fs = require('fs'); 
 let model;

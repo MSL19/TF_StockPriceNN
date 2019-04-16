@@ -1,0 +1,22 @@
+{
+  "name": "tf_stockpricenn",
+  "version": "1.0.0",
+  "description": "",
+  "main": "JSONmaker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MSL19/TF_StockPriceNN.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MSL19/TF_StockPriceNN/issues"
+  },
+  "homepage": "https://github.com/MSL19/TF_StockPriceNN#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}

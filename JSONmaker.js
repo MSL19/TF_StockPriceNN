@@ -8,6 +8,7 @@ let day;
 let minutes;
 let minutesT;
 let lastDBTime;
+let outputString = {};
 function updateTime(){
     d = new Date();
     year = d.getFullYear();
@@ -72,12 +73,15 @@ async function updateNN(){
 async function predictPrice(){ //this function only runs of the stock price has updated (this happens every 30 minutes)
 console.log('wdas');
     try{
-    console.log("asdasd");
+        let DBup = dataBaseCheck(jsonString); //checking if the Database has updated--if not, the NN will not be run
+
+    console.log("asdasd"+DBup);
     jsonString = await getStockJSONapple();
-    let DBup = dataBaseCheck(jsonString); //checking if the Database has updated--if not, the NN will not be run
     jsonString2 = await getStockJSONmicro();
-    //if(DBup){
+    if(!DBup){
         console.log("asdasd");
+        let timeSeriesKeys = Object.keys(jsonString["Time Series (30min)"]);
+
         testData = [{
             pD: jsonString["Time Series (30min)"][timeSeriesKeys[0]]['4. close'] - jsonString["Time Series (30min)"][timeSeriesKeys[1]]['4. close'], 
             vD: jsonString["Time Series (30min)"][timeSeriesKeys[0]]['5. volume'] - jsonString["Time Series (30min)"][timeSeriesKeys[1]]['5. volume'],
@@ -108,18 +112,37 @@ console.log('wdas');
         
         ]), [1,3])
         console.log('......Loss History.......');
-        for(let i=0;i<98;i++){
-         let res = await model.fit(trainingData, outputData, {epochs: 98});
-         console.log(`Iteration ${i}: ${res.history.loss[0]}`);
-      }
+    //    for(let i=0;i<98;i++){
+         let res = await model.fit(trainingData, outputData, {epochs: 1});
+         console.log(`Iteration X: ${res.history.loss[0]}`);
+      //}
       console.log('....Model Prediction !!!.....')
-      model.predict(predictData).print();
- //   }
+      let prediction = model.predict(predictData);
+      prediction.print();
+      if(prediction[0]>prediction[2]){
+          bigString["Prediction"] = "price will go up!";
+
+      }
+      else{
+        bigString["prediction"] = "price will go down!";
+      }
+      bigString["prediction array"] = prediction.toString();
+      bigString["prediction number"] = await prediction.data();
+
+      const express = require('express'); //create express sender object
+
+    }
 }
 catch(e){
     console.log(e);
 }
 }
+const express = require('express'); //create express sender object
+
+const app = express();//create express object
+const port = 3030; //set the localhost port
+app.get('/', (req, res) => res.json(bigString)); //send the data to the website: https://www.kdsatp.org/nnpp/
+app.listen(port, () => console.log(`Listening on port ${port}!`)); //log that you are sending the data
 
 function dataBaseCheck(company){ //this checks to see if the database has been updated
     let SMupdateBool; 
@@ -309,5 +332,4 @@ async function train_data(){
 
 }
 
-//updateNN();
- 
+setInterval(updateNN, 1000*60*7); 

@@ -331,4 +331,4 @@ async function train_data(){
 
 }
 
-setInterval(updateNN, 1000*60*1); 
+setInterval(updateNN, 1000*60*2); 

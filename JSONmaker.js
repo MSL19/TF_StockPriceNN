@@ -322,8 +322,8 @@ train_data();
 
 async function train_data(){
     console.log('......Loss History.......');
-    for(let i=0;i<8;i++){
-     let res = await model.fit(trainingData, outputData, {epochs: 8});
+    for(let i=0;i<98;i++){
+     let res = await model.fit(trainingData, outputData, {epochs: 98});
      console.log(`Iteration ${i}: ${res.history.loss[0]}`);
   }
   console.log('....Model Prediction .....')

@@ -1,4 +1,12 @@
 //time stuff
+/**
+ * Name: Max Lewis
+ * Project Name: AI Project #1
+ * Purpose: 
+ * Use Tensor Flow to create a neural network with 4 input nodes with the intention of predicting the price of Apple Stock.
+ * Date: 4/15/19
+ * Collaborators: None
+ */
 let date;
 let time;
 let lastRef;
@@ -63,7 +71,10 @@ let testData = [];//require('./predictJSON.json');
 let jData = [];
 
 let bigString = {};
-
+let numCorrect = 0;
+bigString["numPre"] = 0;
+bigString["runs"] = 0;
+bigString["numCorrect"]= 0;
 async function updateNN(){
     predictPrice(); 
 
@@ -77,7 +88,7 @@ console.log('wdas');
     console.log("asdasd"+DBup);
     jsonString = await getStockJSONapple();
     jsonString2 = await getStockJSONmicro();
-    if(!DBup){
+    if(DBup){
         console.log("asdasd");
         let timeSeriesKeys = Object.keys(jsonString["Time Series (30min)"]);
 
@@ -110,6 +121,28 @@ console.log('wdas');
             item.pC < 0 ? 1 : 0
         
         ]), [1,3])
+        if(bigString["numPre"]==0){
+            if(trainingData['pD']>0){
+            numCorrect++;
+            bigString["lastRun"] = 11;
+
+            }
+            else{
+                bigString["lastRun"] = 12;
+
+            }
+        }
+        else{
+            if(trainingData['pD']<0){
+                numCorrect++;
+                bigString["lastRun"] = 21;
+    
+                }
+                else{
+                    bigString["lastRun"] = 22;
+    
+                }
+        }
         console.log('......Loss History.......');
     //    for(let i=0;i<98;i++){
          let res = await model.fit(trainingData, outputData, {epochs: 1});
@@ -117,18 +150,22 @@ console.log('wdas');
       //}
       console.log('....Model Prediction !!!.....')
       let prediction = model.predict(predictData);
+      let preAr = await prediction.data();
       prediction.print();
-      if(prediction[0]>prediction[2]){
+      if(preAr['0']>preAr['2']){
           bigString["Prediction"] = "price will go up!";
+          bigString["numPre"] = 0;
 
       }
       else{
         bigString["prediction"] = "price will go down!";
+        bigString["numPre"] = 1;
+
       }
       bigString["prediction array"] = prediction.toString();
-      bigString["prediction number"] = await prediction.data();
+      bigString["prediction number"] = preAr;
 
-      const express = require('express'); //create express sender object
+      //const express = require('express'); //create express sender object
 
     }
 }
@@ -331,4 +368,4 @@ async function train_data(){
 
 }
 
-setInterval(updateNN, 1000*60*2); 
+setInterval(updateNN, 1000*60*7); 

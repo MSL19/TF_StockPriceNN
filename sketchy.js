@@ -25,9 +25,25 @@ async function getData() {
   async function setup(){
     pixelDensity(4.7); //makes it high res
     //fullScreen();
-    createCanvas(500,500);
+    createCanvas(1000,500);
   
     background(170);
+  }
+  function pieChart(diameter, data) {
+    let lastAngle = 0;
+    for (let i = 0; i < data.length; i++) {
+      let gray = map(i, 0, data.length, 0, 255);
+      fill(gray);
+      arc(
+        width / 2+200,
+        height / 2,
+        diameter,
+        diameter,
+        lastAngle,
+        lastAngle + radians(data[i])
+      );
+      lastAngle += radians(data[i]);
+    }
   }
   async function draw(){
     if(ready){
@@ -44,6 +60,8 @@ async function getData() {
         text("Decrease", 330, 480);
         textSize(20);
         text("A Visual Representation Predict Price Change Values", 10, 60);
-
+        let corectData = [data['runs']-data['numCorrect']*360, data['numCorrect']*360+30];
+        console.log(corectData);
+      pieChart(400,corectData);
     }
   }

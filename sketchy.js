@@ -58,6 +58,7 @@ async function getData() {
         text("Increase", 50, 480);
         text("No Change", 190, 480);
         text("Decrease", 330, 480);
+        text("Sucess Rate", 730, 480);
         textSize(20);
         text("A Visual Representation Predict Price Change Values", 10, 60);
         let corectData = [data['runs']-data['numCorrect']*360, data['numCorrect']*360+30];

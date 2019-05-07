@@ -85,7 +85,7 @@ console.log('wdas');
     console.log("asdasd"+DBup);
     jsonString = await getStockJSONapple();
     jsonString2 = await getStockJSONmicro();
-    if(DBup){
+    if(!DBup){
         bigString["runs"] += 1;
         console.log("asdasd");
         let timeSeriesKeys = Object.keys(jsonString["Time Series (30min)"]);
@@ -346,7 +346,7 @@ train_data();
 async function train_data(){
     console.log('......Loss History.......');
     for(let i=0;i<98;i++){
-     let res = await model.fit(trainingData, outputData, {epochs: 98});
+     let res = await model.fit(trainingData, outputData, {epochs: 8});
      console.log(`Iteration ${i}: ${res.history.loss[0]}`);
   }
   console.log('....Model Prediction .....')
@@ -354,4 +354,4 @@ async function train_data(){
 
 }
 
-setInterval(updateNN, 1000*60*7); 
+setInterval(updateNN, 1000*60); 

@@ -24,9 +24,7 @@ function updateTime(){
     day = d.getDate();
     hours = d.getHours(); //for the kdsatp server i don't need to subtract 2
     minutes = d.getMinutes();
-/*(minutes<0){
-    hours--;
-}*/
+
 if(minutes<30){
      minutesT = "00";
 }
@@ -66,8 +64,7 @@ let volumeDeltaHM = [];
 let priceMovementHM = [];
 let shiftedPriceChangeM =[];
 
-//let JSONdata = require('./stockTraining.json');
-let testData = [];//require('./predictJSON.json');
+let testData = [];
 let jData = [];
 
 let bigString = {};
@@ -89,6 +86,7 @@ console.log('wdas');
     jsonString = await getStockJSONapple();
     jsonString2 = await getStockJSONmicro();
     if(DBup){
+        bigString["runs"] += 1;
         console.log("asdasd");
         let timeSeriesKeys = Object.keys(jsonString["Time Series (30min)"]);
 
@@ -144,7 +142,6 @@ console.log('wdas');
                 }
         }
         console.log('......Loss History.......');
-    //    for(let i=0;i<98;i++){
          let res = await model.fit(trainingData, outputData, {epochs: 1});
          console.log(`Iteration X: ${res.history.loss[0]}`);
       //}
@@ -164,8 +161,6 @@ console.log('wdas');
       }
       bigString["prediction array"] = prediction.toString();
       bigString["prediction number"] = preAr;
-
-      //const express = require('express'); //create express sender object
 
     }
 }
@@ -216,7 +211,6 @@ function getStockJSONapple(){ //this pulls the JSON data on Apple stock from Alp
                 try{
                 company = JSON.parse(json);   
                 resolve(company); //returning the JSON
-                //console.log(company);
                 }
                 catch(e){
                 reject(e);
@@ -244,7 +238,6 @@ function getStockJSONapple(){ //this pulls the JSON data on Apple stock from Alp
                 try{
                 company = JSON.parse(json);   
                 resolve(company); //returning the JSON
-               // console.log(company);
                 dataBaseCheck(company);
                 }
                 catch(e){
@@ -267,9 +260,7 @@ function getStockJSONapple(){ //this pulls the JSON data on Apple stock from Alp
   getData();
   function parseData(){
   let timeSeriesKeys = Object.keys(jsonString["Time Series (30min)"]);
-  //console.log(timeSeriesKeys);
   for(let i = timeSeriesKeys.length-1; i>1; i--){
-    //console.log(jsonString["Time Series (30min)"][timeSeriesKeys[i]]['5. volume']);
     let priceDelta = jsonString["Time Series (30min)"][timeSeriesKeys[i-1]]['4. close'] - jsonString["Time Series (30min)"][timeSeriesKeys[i]]['4. close'];
     pricesDeltaH.push(priceDelta);
     let volumtDelta = jsonString["Time Series (30min)"][timeSeriesKeys[i-1]]['5. volume'] - jsonString["Time Series (30min)"][timeSeriesKeys[i]]['5. volume'];
@@ -285,8 +276,7 @@ function getStockJSONapple(){ //this pulls the JSON data on Apple stock from Alp
     let priceDelta = jsonString["Time Series (30min)"][timeSeriesKeys[i-1]]['4. close'] - jsonString["Time Series (30min)"][timeSeriesKeys[i]]['4. close'];
     shiftedPriceChange.push(priceDelta);
 
-  /*  let priceDeltaM = jsonString2["Time Series (30min)"][timeSeriesKeys[i-1]]['4. close'] - jsonString["Time Series (30min)"][timeSeriesKeys[i]]['4. close'];
-    shiftedPriceChangeM.push(priceDeltaM);*/
+ 
  }
   for(let i= 0; i<volumeDeltaH.length; i++){
       let objectP = {
@@ -305,10 +295,7 @@ function getStockJSONapple(){ //this pulls the JSON data on Apple stock from Alp
       pDM: jsonString2["Time Series (30min)"][timeSeriesKeys[0]]['4. close'] - jsonString2["Time Series (30min)"][timeSeriesKeys[1]]['4. close'],
       vDM: jsonString2["Time Series (30min)"][timeSeriesKeys[0]]['5. volume'] - jsonString2["Time Series (30min)"][timeSeriesKeys[1]]['5. volume']
   }]
-  //fs.writeFile('stockTraining.json', JSON.stringify(jData), function(){});
-  //fs.writeFile('predictJSON.json', JSON.stringify(testData), function(){});
-
-//JSONdata = JSON.stringify(jData);
+ 
 trainNN();
 }
 
@@ -349,7 +336,6 @@ function trainNN(){
     
     model.summary();
 
-    // compiling model
 model.compile({
     loss: "categoricalCrossentropy",
     optimizer: tf.train.adam()

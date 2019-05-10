@@ -19,4 +19,8 @@ sketchy.js:
 
 -type "npm install" to install the Node.JS addons
 -type node JSONmaker.js to start the Node.JS backend
+-if you are running the code locally, type "http://localhost:3030/" into your browaser to see the JSON output, or if on the KDSATP server, type https://kdsatp.org/nnpp/
+-Keep in mind that it will take 5-7 minutes for the JSON to update, as the function only runs every 5-7 minutes (and if the stock market is down, you will have to wait until it is back up to see an update)
+-here is a screenshot of the working code running in terminal:
+![](/Capture3.PNG)
 -simply opening the index.html file in Chrome should launch the page (wait a second for it to load the data), or alternitivley, visit: https://msl19.github.io/TF_StockPriceNN/
